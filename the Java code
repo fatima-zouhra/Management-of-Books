@@ -1,0 +1,210 @@
+import java.util.LinkedList;
+import java.util.Scanner;
+
+// Book class to store book details
+class Book {
+    String name;
+    String author;
+    String isbn;
+    double price;
+    int quantity;
+
+    public Book(String name, String author, String isbn, double price, int quantity) {
+        this.name = name;
+        this.author = author;
+        this.isbn = isbn;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Name: %s | Author: %s | ISBN: %s | Price: $%.2f | Quantity: %d", 
+                              name, author, isbn, price, quantity);
+    }
+    // Setter methods for updating book details
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+}
+
+public class ManaBooks {
+    private Scanner sc; // Declare a single Scanner object
+    private LinkedList<Book> books; // Using LinkedList to store books
+
+    public ManaBooks() {
+        this.sc = new Scanner(System.in);
+        this.books = new LinkedList<>();
+    }
+
+    public void addBook(){
+        try{
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter the book name: ");
+        String name = sc.nextLine();
+        System.out.print("Enter the book author: ");
+        String author = sc.nextLine();
+        System.out.print("Enter the book ISBN: ");
+        String isbn = sc.next();
+        System.out.print("Enter the book price: ");
+        double price = sc.nextDouble();
+        System.out.print("Enter the quantity of the book: ");
+        int quantity = sc.nextInt();
+        sc.nextLine(); // Consume the leftover newline
+        // ✅ Add the book to the LinkedList
+        books.add(new Book(name, author, isbn, price, quantity));
+        System.out.println("The book add successfully!"); 
+    } catch (java.util.InputMismatchException e) {
+        System.out.println("Invalid input! Please enter valid data (numbers for price and quantity).");
+        sc.nextLine(); // Consume the invalid input
+    } catch (Exception e) {
+        System.out.println("An error occurred while adding the book: " + e.getMessage());
+    }     
+    }
+    public void deleteBook() {
+        try{
+        System.out.print("Enter the book ISBN to delete: ");
+        String isbn = sc.next();
+        sc.nextLine();
+    
+        // ✅ Find and remove the book
+        boolean removed = books.removeIf(book -> book.isbn.equals(isbn));
+    
+        if (removed) {
+            System.out.println("The book was deleted successfully!");
+        } else {
+            System.out.println("Book not found.");
+        }   
+    } catch (Exception e) {
+        System.out.println("An error occurred while deleting the book: " + e.getMessage());
+        
+    }
+    }
+    void updateBook() {
+        try{
+           System.out.print("Enter the book ISBN: ");
+           String isbn = sc.nextLine();
+
+           // Find the book by ISBN
+           Book bookToUpdate = null;
+           for (Book book : books) {
+              if (book.isbn.equals(isbn)) {
+                bookToUpdate = book;
+                break;
+              }
+            }
+
+            if (bookToUpdate != null) {
+            System.out.print("Enter the new book price: ");
+            double price = sc.nextDouble();
+            System.out.print("Enter the new book quantity: ");
+            int quantity = sc.nextInt();
+            sc.nextLine(); 
+
+            // Update the book details
+            bookToUpdate.setPrice(price);
+            bookToUpdate.setQuantity(quantity);
+
+            System.out.println("The book updated successfully!");
+           } else {
+            System.out.println("Book not found.");
+           }
+        } catch (java.util.InputMismatchException e) {
+        System.out.println("Invalid input! Please enter valid data (numbers for price and quantity).");
+        sc.nextLine(); // Consume the invalid input
+        } catch (Exception e) {
+        System.out.println("An error occurred while updating the book: " + e.getMessage());
+        }
+    }
+
+    void searchBook() {
+        try {
+            System.out.print("Enter the book ISBN: ");
+            String isbn = sc.nextLine();
+
+            Book bookToSearch = null;
+            for (Book book : books) {
+                if (book.isbn.equals(isbn)) {
+                    bookToSearch = book;
+                    break;
+                }
+            }
+
+            if (bookToSearch != null) {
+                System.out.println("The book is found!");
+                System.out.println(bookToSearch);
+            } else {
+                System.out.println("Book not found.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("An error occurred while searching for the book: " + e.getMessage());
+        }
+    }
+
+
+    public void displayAllBooks() {
+        if (books.isEmpty()) {
+            System.out.println("\nNo books available.");
+            return;
+        }
+    
+        System.out.println("\nList of Books:");
+        int index = 1;
+        for (Book book : books) {
+            System.out.println(index + ". " + book);
+            index++;
+        }
+    }
+
+   void choice(){
+        System.out.println("*****************************************************************");
+        System.out.println("                       Management of Books ");
+        System.out.println("*****************************************************************");
+        System.out.println("1. Add a book");
+        System.out.println("2. Delete a book");
+        System.out.println("3. Update a book");
+        System.out.println("4. Search a book");
+        System.out.println("5. Display all books");
+        System.out.println("6. Exit");
+
+        
+    }
+    public void start(){
+        while (true) {
+            choice();
+            System.out.print("Enter your choice: ");
+           try {
+                int choice = sc.nextInt();
+                sc.nextLine();
+
+                switch (choice) {
+                    case 1 -> addBook();
+                    case 2 -> deleteBook();
+                    case 3 -> updateBook();
+                    case 4 -> searchBook();
+                    case 5 -> displayAllBooks();
+                    case 6 -> {
+                        System.out.println("Exiting program...");
+                        sc.close(); 
+                        System.exit(0);
+                    }
+                    default -> System.out.println("Invalid choice, please try again.");
+                }
+            } catch (java.util.InputMismatchException e) {
+                System.out.println("Invalid choice! Please enter a valid number.");
+                sc.nextLine(); 
+            } catch (Exception e) {
+                System.out.println("An error occurred: " + e.getMessage());
+            }
+        }
+    }
+    public static void main(String[] args) {
+        ManaBooks mb = new ManaBooks();
+        mb.start(); // Run the program loop
+    }
+}
